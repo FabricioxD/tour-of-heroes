@@ -9,11 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  heroes: Hero[] = [];
-  constructor(private heroService: HeroService) { }
+  heroes: Hero[];
+  constructor(private heroService: HeroService) { 
+    this.heroes = new Array<Hero>();
+  }
 
   ngOnInit() {
-    this.heroService.getHeroes().then(heroes => this.heroes = heroes.slice(1,5));
+      this.heroService.getHeroes().then(snapshot =>
+        snapshot.forEach(childSnapshot => {
+          this.heroes.push(childSnapshot.val());
+           console.log(childSnapshot.val())
+          })
+      );
   }
 
 }

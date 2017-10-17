@@ -22,8 +22,8 @@ export class HeroDetailComponent implements OnInit  {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     this.route.paramMap.switchMap((params: ParamMap) => 
-    this.heroService.getHero(+params.get('id')))
-    .subscribe(hero => this.hero = hero);
+    this.heroService.getHero(params.get('id')))
+    .subscribe(hero => {this.hero = hero; console.log("Hero: ",hero)});
   }
 
   goBack(){

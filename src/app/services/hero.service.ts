@@ -7,74 +7,72 @@ import * as firebase from "firebase";
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import { Observable } from 'rxjs/Observable';
 
-
-
-
 @Injectable()
 export class HeroService {
 
-  private heroesUrl : any;
-  private herosRef : any;
+  private baseUrl = 'https://tour-of-heroes-e2440.firebaseio.com/';  
   private headers = new Headers({'Content-type': 'application/json'});
-
-  
-
-  constructor(private http: Http, private af: AngularFireDatabase) { 
-    this.heroesUrl = firebase.database().ref('/heroes').toString();
-
-    
-
+  private newHero: Hero;
+  constructor(private http: Http, private af: AngularFireDatabase) {
   }
 
-/*
-  getHeroes(): Promise<Hero[]>{
-    return this.http.get(this.heroesUrl)
-      .toPromise()
-      .then(response => response.json().data as Hero[])
-      .catch(this.handleError)
-
+  getHeroes(){
+    return firebase.database().ref("heroes").orderByKey()
+    .once("value");
   }
 
-  private handleError(error: any): Promise<any>{
-    console.error('Ocorreu um erro', error);
-    return Promise.reject(error.message || error);
-
+  getHero(id: string): Promise<Hero>{
+    console.log("id: ",id);
+    return new Promise(resolve => {
+      this.http.get(`${this.baseUrl}/heroes/${id}.json`).subscribe(res => resolve(res.json()));
+    })
   }
-
-  getHero(id: number): Promise<Hero>{
-    const url = `${this.heroesUrl}/${id})`;
-    return this.http.get(url)
-    .toPromise()
-    .then(response => response.json().data as Hero)
-    .catch(this.handleError);
-  } 
 
   update(hero: Hero): Promise<Hero>{
-    const url = `${this.heroesUrl}/${hero.id}`;
-    return this.http.put(url, JSON.stringify(hero), {headers: this.headers})
-    .toPromise()
-    .then(() => hero)
-    .catch(this.handleError);
+    return firebase.database().ref('heroes/' + hero.id).set(hero);
   }
 
-  create(name: string): Promise<Hero>{
-    return this.http
-    .post(this.heroesUrl, JSON.stringify(name), {headers: this.headers})
-    .toPromise()
-    .then(response => response.json().data as Hero)
-    .catch(this.handleError);
+  create(heroName: string){
+    var key = firebase.database().ref().child('heroes/').push().key;
+    console.log("Key: ",key);
+    this.newHero = new Hero();
+    this.newHero.id = key;
+    this.newHero.name = heroName;
+
+    firebase.database().ref().child('/heroes/' + key).set(this.newHero);
+    return this.newHero;
   }
 
-  delete(id: number): Promise<void>{
-    const url = `${this.heroesUrl}/${id}`
-    return this.http.delete(url, {headers: this.headers})
-    .toPromise()
-    .then(() => null)
-    .catch(this.handleError);
+  delete(hero: Hero){
+    return firebase.database().ref().child('/heroes/' + hero.id).remove();
 
-  }*/
+  }
 
+  /*Diferenças update e set
 
+    var postData = {
+        author: username,
+        uid: uid,
+        body: body,
+        title: title,
+        starCount: 0
+    };
 
+    Update
+    var newPostKey = firebase.database().ref().child('posts').push().key;
+
+    var updates = {};
+    updates['/posts/' + newPostKey] = postData;
+    updates['/user-posts/' + uid + '/' + newPostKey] = postData;
+
+    return firebase.database().ref().update(updates);
+
+    Set
+     newPostKey = firebase.database().ref().child('posts').push().key;
+
+    firebase.database().ref().child('/posts/' + newPostKey).set(postData);
+    firebase.database().ref().child('/user-posts/' + uid + '/' + newPostKey).set(postData);
+
+  */
 
 }
