@@ -1,4 +1,4 @@
-.selected {
+    .selected {
       background-color: #CFD8DC !important;
       color: white;
     }
@@ -47,12 +47,21 @@
       
     }
 
-    delete{
-      float:right
-      margin-top 2px;
-      margin-right: .8em;
+    .delete{
+      line-height: 1em;
+      position: relative;
+      left: -1px;
+      top: -4px;
+      height: 2.5em;
+      border-radius: 4px 0 0 4px;
+      float:right;
+
+      color:black;
+      /*
+      margin-top: 2px;
+      border-radius: 4px 0 0 4px;
       background-color: gray !important;
-      color:white;
+      */
     }
 
    

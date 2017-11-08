@@ -20,7 +20,7 @@ export class HeroesComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.getHeroes();
+    this.getHeroes();
   }
 
   onSelect(hero: Hero): void {
@@ -55,7 +55,7 @@ export class HeroesComponent implements OnInit {
     this.heroService
     .delete(hero)
     .then(() => {
-      this.heroes = this.heroes.filter(h => h !== h)
+      this.heroes = this.heroes.filter(h => hero !== h)
       if(this.selectedHero === hero) {this.selectedHero = null}
     })
   }
